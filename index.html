@@ -33,6 +33,9 @@
   .notif-btn.on { background: #EAF3DE; border-color: #3B6D11; color: #3B6D11; }
   .notif-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); }
   .notif-btn.on .notif-dot { background: var(--green); }
+  .sync-btns { display: flex; gap: 6px; }
+  .sync-btn { display: flex; align-items: center; gap: 5px; height: 34px; padding: 0 13px; border-radius: 99px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font); white-space: nowrap; }
+  .sync-btn:hover { background: var(--bg); color: var(--text1); }
 
   .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 12px; }
   @media(max-width:500px){ .stats-row { grid-template-columns: repeat(2,1fr); } }
@@ -204,6 +207,11 @@
       <span class="notif-dot"></span>
       <span id="notif-txt">Bật nhắc nhở</span>
     </button>
+    <div class="sync-btns">
+      <button class="sync-btn" onclick="exportData()" title="Xuất dữ liệu"><i class="ti ti-download"></i> Xuất</button>
+      <button class="sync-btn" onclick="document.getElementById('import-file').click()" title="Nhập dữ liệu"><i class="ti ti-upload"></i> Nhập</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(event)" />
+    </div>
   </div>
 
   <div class="stats-row">
@@ -718,6 +726,36 @@ function saveEdit() {
   save(); closeEdit(); render(); showToast('Đã lưu thay đổi ✅');
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEdit(); });
+
+// Export / Import
+function exportData() {
+  const json = JSON.stringify(state, null, 2);
+  const blob = new Blob([json], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const d = new Date();
+  a.href = url;
+  a.download = `cong-viec-${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('Đã xuất dữ liệu! 📁');
+}
+function importData(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!imported.tasks || !imported.categories) { showToast('File không hợp lệ!'); return; }
+      if (!confirm(`Nhập ${imported.tasks.length} công việc?\nDữ liệu hiện tại sẽ bị thay thế.`)) return;
+      state = imported;
+      save(); buildCatSel(); buildCatChips(); buildCatFilters(); render();
+      showToast(`Đã nhập ${imported.tasks.length} công việc! ✅`);
+    } catch(_) { showToast('Lỗi đọc file, vui lòng thử lại!'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
 
 // Init
 buildCatSel(); buildCatChips(); buildCatFilters(); updateNotifUI();
