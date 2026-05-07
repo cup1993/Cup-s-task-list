@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Công việc của tôi</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #ffffff; --bg2: #f5f5f4; --bg3: #e8e8e6;
+    --text1: #1c1917; --text2: #57534e; --text3: #a8a29e;
+    --border1: #d6d3d1; --border2: #e7e5e4; --border3: #f0efee;
+    --accent: #BA7517; --accent-dark: #854F0B;
+    --green: #1D9E75; --red: #993C1D; --radius: 10px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #1c1917; --bg2: #292524; --bg3: #3c3836;
+      --text1: #fafaf9; --text2: #a8a29e; --text3: #57534e;
+      --border1: #44403c; --border2: #292524; --border3: #1c1917;
+    }
+  }
+  body { font-family: var(--font); background: var(--bg2); color: var(--text1); min-height: 100vh; }
+  .app { max-width: 700px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+  /* Header */
+  .header { margin-bottom: 1.5rem; }
+  .date-label { font-size: 11px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+  .title { font-size: 24px; font-weight: 600; color: var(--text1); }
+
+  /* Stats */
+  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 12px; }
+  .stat-card { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); padding: 12px 14px; }
+  .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
+  .stat-val { font-size: 22px; font-weight: 600; color: var(--text1); }
+  .stat-val.s-done { color: var(--green); }
+  .stat-val.s-pending { color: var(--accent); }
+  .progress-wrap { height: 4px; background: var(--bg3); border-radius: 99px; margin-bottom: 1.5rem; overflow: hidden; }
+  .progress-bar { height: 4px; background: var(--green); border-radius: 99px; transition: width .4s ease; }
+
+  /* Add area */
+  .add-area { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; }
+  .add-row { display: flex; gap: 8px; margin-bottom: 10px; }
+  .add-row input { flex: 1; font-size: 14px; height: 38px; padding: 0 12px; border-radius: 8px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text1); outline: none; font-family: var(--font); }
+  .add-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(186,117,23,.15); }
+  .meta-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .meta-row select, .meta-row input[type=date] { font-size: 13px; height: 32px; padding: 0 8px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text2); outline: none; cursor: pointer; font-family: var(--font); }
+  .meta-row select:focus, .meta-row input[type=date]:focus { border-color: var(--accent); }
+  .btn-add { height: 38px; padding: 0 18px; border-radius: 8px; border: none; background: var(--accent); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; font-family: var(--font); }
+  .btn-add:hover { background: var(--accent-dark); }
+  .btn-add:active { transform: scale(.98); }
+
+  /* Cat manage */
+  .cat-manage { display: flex; align-items: center; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: .5px solid var(--border2); flex-wrap: wrap; }
+  .cat-manage-label { font-size: 12px; color: var(--text3); flex-shrink: 0; }
+  .cat-manage input[type=text] { font-size: 13px; height: 30px; padding: 0 10px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text1); outline: none; width: 130px; font-family: var(--font); }
+  .cat-manage input[type=color] { width: 30px; height: 30px; border: .5px solid var(--border1); border-radius: 7px; cursor: pointer; padding: 2px; background: var(--bg2); }
+  .btn-sm { height: 30px; padding: 0 12px; border-radius: 7px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font); }
+  .btn-sm:hover { background: var(--bg2); }
+  .cat-chips { display: flex; gap: 5px; flex-wrap: wrap; }
+  .cat-chip { font-size: 11px; padding: 3px 9px; border-radius: 99px; display: flex; align-items: center; gap: 4px; cursor: pointer; border: .5px solid transparent; }
+  .cat-chip:hover .chip-x { display: inline; }
+  .chip-x { display: none; font-size: 10px; opacity: .6; }
+
+  /* Toolbar */
+  .toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+  .filter-group { display: flex; gap: 4px; flex-wrap: wrap; }
+  .filter-btn { height: 28px; padding: 0 12px; border-radius: 99px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: var(--font); }
+  .filter-btn.active { background: var(--bg); border-color: var(--text2); color: var(--text1); font-weight: 500; }
+  .filter-btn:hover:not(.active) { background: var(--bg); }
+  .vdivider { width: .5px; background: var(--border2); height: 20px; align-self: center; }
+  .cat-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+
+  /* Drag hint */
+  .drag-hint { font-size: 11px; color: var(--text3); text-align: right; margin-bottom: 6px; }
+  .section-label { font-size: 11px; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; padding-left: 2px; }
+
+  /* Task list */
+  .task-list { display: flex; flex-direction: column; gap: 6px; }
+  .task-item { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); transition: border-color .15s; user-select: none; }
+  .task-item:hover { border-color: var(--border1); }
+  .task-item.expanded { border-color: var(--border1); }
+  .task-item.done-item { opacity: .5; }
+  .task-item.dragging { opacity: .3; border-style: dashed; }
+  .task-item.drag-over { border-color: var(--accent); border-width: 1px; }
+
+  .task-main { display: flex; align-items: flex-start; gap: 8px; padding: 12px 12px; cursor: default; }
+  .drag-handle { color: var(--text3); cursor: grab; flex-shrink: 0; padding-top: 2px; font-size: 16px; opacity: 0; transition: opacity .15s; }
+  .task-item:hover .drag-handle { opacity: 1; }
+  .drag-handle:active { cursor: grabbing; }
+  .check-btn { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; border: 1.5px solid var(--border1); background: transparent; cursor: pointer; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
+  .check-btn.checked { background: var(--green); border-color: var(--green); }
+  .check-btn.checked::after { content:''; display:block; width:10px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(1px,-1px); }
+  .task-body { flex: 1; min-width: 0; }
+  .task-name { font-size: 14px; color: var(--text1); line-height: 1.4; word-break: break-word; }
+  .done-item .task-name { text-decoration: line-through; color: var(--text3); }
+  .task-meta { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; align-items: center; }
+  .p-badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
+  .p-cao { background: #FAECE7; color: #993C1D; }
+  .p-trung { background: #FAEEDA; color: #854F0B; }
+  .p-thap { background: #EAF3DE; color: #3B6D11; }
+  .cat-badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+  .dl-text { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 3px; }
+  .dl-text.overdue { color: var(--red); }
+  .note-ind { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 3px; }
+  .task-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+  .icon-btn { border: none; background: transparent; color: var(--text3); cursor: pointer; padding: 4px 5px; border-radius: 6px; font-size: 15px; line-height: 1; opacity: 0; transition: opacity .15s; font-family: var(--font); }
+  .task-item:hover .icon-btn { opacity: 1; }
+  .icon-btn:hover { background: var(--bg2); color: var(--text2); }
+  .icon-btn.del:hover { color: #E24B4A; background: #FCEBEB; }
+  .expand-btn { opacity: 1 !important; transition: transform .2s, opacity .15s !important; }
+  .task-item.expanded .expand-btn { transform: rotate(180deg); }
+
+  /* Note panel */
+  .note-panel { border-top: .5px solid var(--border2); padding: 10px 12px 12px 42px; display: none; }
+  .task-item.expanded .note-panel { display: block; }
+  .note-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .note-ta { width: 100%; font-size: 13px; font-family: var(--font); color: var(--text1); background: var(--bg2); border: .5px solid var(--border1); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 76px; outline: none; line-height: 1.6; }
+  .note-ta:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(186,117,23,.12); }
+  .note-ta::placeholder { color: var(--text3); }
+  .note-footer { display: flex; justify-content: flex-end; margin-top: 6px; gap: 6px; }
+  .btn-xs { height: 28px; padding: 0 14px; border-radius: 7px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font); }
+  .btn-xs:hover { background: var(--bg2); }
+  .btn-xs.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-xs.primary:hover { background: var(--accent-dark); }
+
+  /* Empty */
+  .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
+  .empty i { font-size: 36px; display: block; margin-bottom: 8px; }
+
+  /* Toast */
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--text1); color: var(--bg); font-size: 13px; padding: 8px 18px; border-radius: 99px; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 999; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <div class="date-label" id="date-label"></div>
+    <div class="title">Công việc của tôi</div>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-label">Tổng cộng</div><div class="stat-val" id="s-total">0</div></div>
+    <div class="stat-card"><div class="stat-label">Hoàn thành</div><div class="stat-val s-done" id="s-done">0</div></div>
+    <div class="stat-card"><div class="stat-label">Còn lại</div><div class="stat-val s-pending" id="s-pending">0</div></div>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
+  <div class="add-area">
+    <div class="add-row">
+      <input type="text" id="task-input" placeholder="Thêm công việc mới..." autocomplete="off" />
+      <button class="btn-add" onclick="addTask()"><i class="ti ti-plus"></i> Thêm</button>
+    </div>
+    <div class="meta-row">
+      <select id="pri-sel">
+        <option value="cao">🔴 Ưu tiên cao</option>
+        <option value="trung" selected>🟡 Trung bình</option>
+        <option value="thap">🟢 Thấp</option>
+      </select>
+      <select id="cat-sel"></select>
+      <input type="date" id="dl-input" />
+    </div>
+    <div class="cat-manage">
+      <span class="cat-manage-label">Danh mục mới:</span>
+      <input type="text" id="new-cat-name" placeholder="Tên danh mục" maxlength="20" />
+      <input type="color" id="new-cat-color" value="#5DCAA5" />
+      <button class="btn-sm" onclick="addCat()">+ Tạo</button>
+      <div class="cat-chips" id="cat-chips"></div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="filter-group" id="f-status">
+      <button class="filter-btn active" onclick="setF('status','all',this)">Tất cả</button>
+      <button class="filter-btn" onclick="setF('status','active',this)">Chưa xong</button>
+      <button class="filter-btn" onclick="setF('status','done',this)">Đã xong</button>
+    </div>
+    <div class="vdivider"></div>
+    <div class="filter-group" id="f-priority">
+      <button class="filter-btn active" onclick="setF('priority','all',this)">Mọi ưu tiên</button>
+      <button class="filter-btn" onclick="setF('priority','cao',this)">🔴 Cao</button>
+      <button class="filter-btn" onclick="setF('priority','trung',this)">🟡 TB</button>
+      <button class="filter-btn" onclick="setF('priority','thap',this)">🟢 Thấp</button>
+    </div>
+    <div class="vdivider"></div>
+    <div class="filter-group" id="f-cat"></div>
+  </div>
+
+  <div class="drag-hint"><i class="ti ti-grip-vertical" style="font-size:11px;vertical-align:-1px"></i> Kéo thả để sắp xếp &nbsp;·&nbsp; <i class="ti ti-chevron-down" style="font-size:11px;vertical-align:-1px"></i> Bấm mũi tên để ghi chú</div>
+  <div class="section-label" id="list-label">Danh sách</div>
+  <div class="task-list" id="task-list"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ─────────────────────────────────────────────────
+const STORAGE_KEY = 'mytasks_v1';
+let state = load();
+let expandedId = null;
+let dragSrcId = null;
+let filters = { status:'all', priority:'all', cat:'all' };
+
+function load() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(_) {}
+  return {
+    nextId: 7,
+    categories: [
+      { id:'cv', name:'Công việc', color:'#378ADD' },
+      { id:'cn', name:'Cá nhân',  color:'#D4537E' },
+      { id:'ht', name:'Học tập',  color:'#639922' },
+      { id:'kh', name:'Kế hoạch', color:'#EF9F27' },
+    ],
+    tasks: [
+      { id:1, name:'Đọc tài liệu dự án buổi sáng', priority:'cao',  cat:'cv', deadline:'', done:false, note:'Tập trung vào phần SRS và use case. Ghi lại các điểm chưa rõ.' },
+      { id:2, name:'Họp team standup lúc 9h',        priority:'cao',  cat:'cv', deadline:'', done:true,  note:'' },
+      { id:3, name:'Viết báo cáo tuần',               priority:'trung',cat:'cv', deadline:'', done:false, note:'' },
+      { id:4, name:'Ôn lại kiến thức SQL',             priority:'trung',cat:'ht', deadline:'', done:false, note:'Window functions, CTE, index optimization.' },
+      { id:5, name:'Tập thể dục 30 phút',             priority:'thap', cat:'cn', deadline:'', done:false, note:'' },
+      { id:6, name:'Lên kế hoạch tháng tới',          priority:'trung',cat:'kh', deadline:'', done:false, note:'' },
+    ]
+  };
+}
+function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(_) {} }
+
+// ── Helpers ───────────────────────────────────────────────
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function rgba(hex, a) {
+  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${a})`;
+}
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+function fmtDeadline(dl) {
+  if (!dl) return null;
+  const d = new Date(dl+'T00:00:00'), today = new Date(); today.setHours(0,0,0,0);
+  const diff = Math.round((d-today)/86400000);
+  if (diff < 0) return { text:`Quá hạn ${Math.abs(diff)} ngày`, overdue:true };
+  if (diff === 0) return { text:'Hôm nay', overdue:false };
+  if (diff === 1) return { text:'Ngày mai', overdue:false };
+  return { text:`Còn ${diff} ngày`, overdue:false };
+}
+
+// ── Date header ───────────────────────────────────────────
+const DAYS = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+const MONTHS = ['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6','tháng 7','tháng 8','tháng 9','tháng 10','tháng 11','tháng 12'];
+const now = new Date();
+document.getElementById('date-label').textContent = `${DAYS[now.getDay()]}, ngày ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+
+// ── Category controls ─────────────────────────────────────
+function buildCatSel() {
+  document.getElementById('cat-sel').innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+}
+function buildCatChips() {
+  document.getElementById('cat-chips').innerHTML = state.categories.map(c =>
+    `<span class="cat-chip" style="background:${rgba(c.color,.13)};color:${c.color};border-color:${rgba(c.color,.3)}" onclick="removeCat('${c.id}')">
+      <span class="cat-dot" style="background:${c.color}"></span>${esc(c.name)}<span class="chip-x">✕</span>
+    </span>`
+  ).join('');
+}
+function buildCatFilters() {
+  document.getElementById('f-cat').innerHTML =
+    `<button class="filter-btn ${filters.cat==='all'?'active':''}" onclick="setF('cat','all',this)">Mọi DM</button>` +
+    state.categories.map(c =>
+      `<button class="filter-btn ${filters.cat===c.id?'active':''}" onclick="setF('cat','${c.id}',this)">
+        <span class="cat-dot" style="background:${c.color}"></span>${esc(c.name)}
+      </button>`
+    ).join('');
+}
+function addCat() {
+  const nameEl = document.getElementById('new-cat-name');
+  const name = nameEl.value.trim(); if (!name) { nameEl.focus(); return; }
+  const color = document.getElementById('new-cat-color').value;
+  state.categories.push({ id:'u'+Date.now(), name, color });
+  nameEl.value = ''; save(); buildCatSel(); buildCatChips(); buildCatFilters(); render();
+  showToast('Đã thêm danh mục');
+}
+function removeCat(id) {
+  if (state.categories.length <= 1) { showToast('Cần ít nhất 1 danh mục'); return; }
+  state.categories = state.categories.filter(c => c.id !== id);
+  state.tasks.forEach(t => { if (t.cat === id) t.cat = state.categories[0].id; });
+  if (filters.cat === id) filters.cat = 'all';
+  save(); buildCatSel(); buildCatChips(); buildCatFilters(); render();
+}
+
+// ── Task actions ──────────────────────────────────────────
+function addTask() {
+  const input = document.getElementById('task-input');
+  const name = input.value.trim(); if (!name) { input.focus(); return; }
+  state.tasks.unshift({
+    id: state.nextId++,
+    name,
+    priority: document.getElementById('pri-sel').value,
+    cat: document.getElementById('cat-sel').value,
+    deadline: document.getElementById('dl-input').value,
+    done: false,
+    note: ''
+  });
+  input.value = ''; document.getElementById('dl-input').value = '';
+  save(); render(); showToast('Đã thêm công việc');
+}
+document.getElementById('task-input').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
+
+function toggleDone(id) {
+  const t = state.tasks.find(t => t.id === id); if (!t) return;
+  t.done = !t.done; save(); render();
+  if (t.done) showToast('Hoàn thành! 🎉');
+}
+function deleteTask(id) {
+  if (!confirm('Xoá công việc này?')) return;
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  if (expandedId === id) expandedId = null;
+  save(); render(); showToast('Đã xoá');
+}
+function toggleExpand(id) {
+  if (expandedId === id) { expandedId = null; }
+  else { if (expandedId !== null) persistNote(expandedId); expandedId = id; }
+  render();
+}
+function persistNote(id) {
+  const ta = document.getElementById('note-ta-'+id); if (!ta) return;
+  const t = state.tasks.find(t => t.id === id); if (t) { t.note = ta.value; save(); }
+}
+function saveNote(id) { persistNote(id); expandedId = null; render(); showToast('Đã lưu ghi chú'); }
+function cancelNote(id) { expandedId = null; render(); }
+
+// ── Filters ───────────────────────────────────────────────
+function setF(type, val, btn) {
+  filters[type] = val;
+  const gMap = { status:'f-status', priority:'f-priority' };
+  if (gMap[type]) document.querySelectorAll(`#${gMap[type]} .filter-btn`).forEach(b => b.classList.remove('active'));
+  else document.querySelectorAll('#f-cat .filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active'); render();
+}
+function getFiltered() {
+  return state.tasks.filter(t => {
+    if (filters.status === 'active' && t.done) return false;
+    if (filters.status === 'done' && !t.done) return false;
+    if (filters.priority !== 'all' && t.priority !== filters.priority) return false;
+    if (filters.cat !== 'all' && t.cat !== filters.cat) return false;
+    return true;
+  });
+}
+
+// ── Drag & Drop ───────────────────────────────────────────
+function onDragStart(e, id) {
+  dragSrcId = id;
+  setTimeout(() => { const el = document.querySelector(`[data-id="${id}"]`); if (el) el.classList.add('dragging'); }, 0);
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragOver(e, id) {
+  e.preventDefault();
+  document.querySelectorAll('.task-item').forEach(el => el.classList.remove('drag-over'));
+  if (id !== dragSrcId) { const el = document.querySelector(`[data-id="${id}"]`); if (el) el.classList.add('drag-over'); }
+}
+function onDrop(e, targetId) {
+  e.preventDefault();
+  if (!dragSrcId || dragSrcId === targetId) return;
+  const si = state.tasks.findIndex(t => t.id === dragSrcId);
+  const ti = state.tasks.findIndex(t => t.id === targetId);
+  if (si === -1 || ti === -1) return;
+  const [moved] = state.tasks.splice(si, 1); state.tasks.splice(ti, 0, moved);
+  dragSrcId = null; save(); render();
+}
+function onDragEnd() {
+  document.querySelectorAll('.task-item').forEach(el => { el.classList.remove('dragging'); el.classList.remove('drag-over'); });
+  dragSrcId = null;
+}
+
+// ── Render ────────────────────────────────────────────────
+function render() {
+  const done = state.tasks.filter(t => t.done).length, total = state.tasks.length;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-done').textContent = done;
+  document.getElementById('s-pending').textContent = total - done;
+  document.getElementById('progress-bar').style.width = (total ? Math.round(done/total*100) : 0) + '%';
+  buildCatFilters();
+  const filtered = getFiltered();
+  document.getElementById('list-label').textContent = `Hiển thị ${filtered.length} / ${total} công việc`;
+
+  const pLabel = { cao:'Cao', trung:'Trung bình', thap:'Thấp' };
+  const list = document.getElementById('task-list');
+  if (!filtered.length) {
+    list.innerHTML = `<div class="empty"><i class="ti ti-clipboard-list"></i>Không có công việc nào</div>`;
+    return;
+  }
+  list.innerHTML = filtered.map(t => {
+    const dl = fmtDeadline(t.deadline);
+    const cat = state.categories.find(c => c.id === t.cat) || state.categories[0];
+    const isExp = expandedId === t.id;
+    const hasNote = t.note && t.note.trim().length > 0;
+    return `<div class="task-item ${t.done?'done-item':''} ${isExp?'expanded':''}" draggable="true" data-id="${t.id}"
+        ondragstart="onDragStart(event,${t.id})" ondragover="onDragOver(event,${t.id})" ondrop="onDrop(event,${t.id})" ondragend="onDragEnd()">
+      <div class="task-main">
+        <i class="ti ti-grip-vertical drag-handle"></i>
+        <button class="check-btn ${t.done?'checked':''}" onclick="toggleDone(${t.id})" title="${t.done?'Bỏ đánh dấu':'Hoàn thành'}"></button>
+        <div class="task-body">
+          <div class="task-name">${esc(t.name)}</div>
+          <div class="task-meta">
+            <span class="p-badge p-${t.priority}">${pLabel[t.priority]}</span>
+            <span class="cat-badge" style="background:${rgba(cat.color,.13)};color:${cat.color}">
+              <span class="cat-dot" style="background:${cat.color}"></span>${esc(cat.name)}
+            </span>
+            ${dl ? `<span class="dl-text ${dl.overdue?'overdue':''}"><i class="ti ti-calendar" style="font-size:11px"></i> ${dl.text}</span>` : ''}
+            ${hasNote && !isExp ? `<span class="note-ind"><i class="ti ti-notes" style="font-size:11px"></i> Có ghi chú</span>` : ''}
+          </div>
+        </div>
+        <div class="task-actions">
+          <button class="icon-btn del" onclick="deleteTask(${t.id})" title="Xoá"><i class="ti ti-trash"></i></button>
+          <button class="icon-btn expand-btn" onclick="toggleExpand(${t.id})" title="${isExp?'Đóng':'Ghi chú'}"><i class="ti ti-chevron-down"></i></button>
+        </div>
+      </div>
+      <div class="note-panel">
+        <div class="note-label"><i class="ti ti-notes"></i> Ghi chú</div>
+        <textarea class="note-ta" id="note-ta-${t.id}" placeholder="Thêm ghi chú, liên kết, chi tiết công việc...">${esc(t.note||'')}</textarea>
+        <div class="note-footer">
+          <button class="btn-xs" onclick="cancelNote(${t.id})">Huỷ</button>
+          <button class="btn-xs primary" onclick="saveNote(${t.id})"><i class="ti ti-check" style="font-size:12px;vertical-align:-1px"></i> Lưu ghi chú</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+buildCatSel(); buildCatChips(); buildCatFilters(); render();
+</script>
+</body>
+</html>
