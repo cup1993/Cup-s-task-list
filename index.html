@@ -132,8 +132,7 @@
   .expand-btn { opacity: 1 !important; transition: transform .2s !important; }
   .task-item.expanded .expand-btn { transform: rotate(180deg); }
 
-  .note-panel { border-top: .5px solid var(--border2); padding: 10px 12px 12px 42px; display: none; }
-  .task-item.expanded .note-panel { display: block; }
+  .note-panel { border-top: .5px solid var(--border2); padding: 10px 12px 12px 42px; }
   .note-lbl { font-size: 11px; color: var(--text3); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
   .note-ta { width: 100%; font-size: 13px; font-family: var(--font); color: var(--text1); background: var(--bg2); border: .5px solid var(--border1); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 76px; outline: none; line-height: 1.6; }
   .note-ta:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(186,117,23,.12); }
@@ -167,6 +166,31 @@
   .modal-row .modal-field { flex: 1; }
   .modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px 16px; border-top: .5px solid var(--border2); }
   .icon-btn.edit:hover { color: var(--accent); background: #FAEEDA; }
+
+  /* Subtasks */
+  .subtask-section { border-top: .5px solid var(--border2); padding: 10px 12px 4px 42px; }
+  .subtask-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .subtask-lbl { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 5px; }
+  .subtask-prog { font-size: 11px; color: var(--text3); }
+  .subtask-prog-bar-wrap { height: 3px; background: var(--bg3); border-radius: 99px; margin-bottom: 8px; overflow: hidden; }
+  .subtask-prog-bar { height: 3px; background: var(--green); border-radius: 99px; transition: width .3s; }
+  .subtask-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+  .subtask-row { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 7px; }
+  .subtask-row:hover { background: var(--bg2); }
+  .sub-check { width: 16px; height: 16px; min-width: 16px; border-radius: 4px; border: 1.5px solid var(--border1); background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; flex-shrink: 0; }
+  .sub-check.checked { background: var(--green); border-color: var(--green); }
+  .sub-check.checked::after { content:''; display:block; width:8px; height:5px; border-left:1.5px solid #fff; border-bottom:1.5px solid #fff; transform:rotate(-45deg) translate(1px,-1px); }
+  .sub-name { font-size: 13px; flex: 1; color: var(--text1); line-height: 1.4; word-break: break-word; }
+  .sub-name.done { text-decoration: line-through; color: var(--text3); }
+  .sub-del { border: none; background: transparent; color: var(--text3); cursor: pointer; padding: 2px 4px; border-radius: 4px; font-size: 13px; opacity: 0; line-height: 1; }
+  .subtask-row:hover .sub-del { opacity: 1; }
+  .sub-del:hover { color: #E24B4A; background: #FCEBEB; }
+  .subtask-add-row { display: flex; gap: 6px; margin-bottom: 8px; }
+  .subtask-add-row input { flex: 1; font-size: 13px; height: 30px; padding: 0 10px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text1); outline: none; font-family: var(--font); }
+  .subtask-add-row input:focus { border-color: var(--accent); }
+  .btn-sub-add { height: 30px; padding: 0 12px; border-radius: 7px; border: none; background: var(--accent); color: #fff; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-family: var(--font); white-space: nowrap; }
+  .btn-sub-add:hover { background: var(--accent-dark); }
+  .sub-ind { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 3px; }
 </style>
 </head>
 <body>
@@ -320,10 +344,17 @@ function load() {
       
     ],
     tasks: [
-      {id:1,name:'Viết báo cáo dự án Q2',priority:'cao',cat:'es',start:'2025-05-01',end:'2025-05-15',done:false,note:'Tập trung phần phân tích số liệu và biểu đồ.'},
-      {id:2,name:'Ôn thi chứng chỉ SQL',priority:'trung',cat:'cs',start:'2025-05-05',end:'2025-05-25',done:false,note:'Window functions, CTE, index.'},
-      {id:3,name:'Tập thể dục mỗi ngày',priority:'thap',cat:'cn',start:'2025-05-01',end:'2025-05-31',done:false,note:''},
-      {id:4,name:'Lên kế hoạch tháng 6',priority:'trung',cat:'cn',start:'2025-05-20',end:'2025-05-30',done:false,note:''},
+      {id:1,name:'Viết báo cáo dự án Q2',priority:'cao',cat:'es',start:'2025-05-01',end:'2025-05-15',done:false,note:'Tập trung phần phân tích số liệu và biểu đồ.',subtasks:[
+        {id:101,name:'Thu thập dữ liệu từ hệ thống',done:true},
+        {id:102,name:'Vẽ biểu đồ thống kê',done:false},
+        {id:103,name:'Viết phần kết luận',done:false},
+      ]},
+      {id:2,name:'Ôn thi chứng chỉ SQL',priority:'trung',cat:'cs',start:'2025-05-05',end:'2025-05-25',done:false,note:'Window functions, CTE, index.',subtasks:[
+        {id:201,name:'Ôn Window Functions',done:true},
+        {id:202,name:'Thực hành CTE',done:false},
+      ]},
+      {id:3,name:'Tập thể dục mỗi ngày',priority:'thap',cat:'cn',start:'2025-05-01',end:'2025-05-31',done:false,note:'',subtasks:[]},
+      {id:4,name:'Lên kế hoạch tháng 6',priority:'trung',cat:'cn',start:'2025-05-20',end:'2025-05-30',done:false,note:'',subtasks:[]},
     ]
   };
 }
@@ -449,7 +480,7 @@ function addTask() {
   const start=document.getElementById('start-input').value, end=document.getElementById('end-input').value;
   if(start&&end&&end<start){showToast('Ngày kết thúc phải sau ngày bắt đầu!');return;}
   state.tasks.unshift({id:state.nextId++,name,priority:document.getElementById('pri-sel').value,
-    cat:document.getElementById('cat-sel').value,start,end,done:false,note:''});
+    cat:document.getElementById('cat-sel').value,start,end,done:false,note:'',subtasks:[]});
   input.value=''; document.getElementById('end-input').value='';
   document.getElementById('start-input').value=NOW.toISOString().slice(0,10);
   save(); render(); showToast('Đã thêm công việc');
@@ -570,6 +601,9 @@ function render() {
     const isExp=expandedId===t.id, hasNote=t.note&&t.note.trim().length>0;
     const st=getStatus(t);
     const end=parseDate(t.end), daysLeft=end?diffDays(tod,end):null;
+    const subs=t.subtasks||[];
+    const subDone=subs.filter(s=>s.done).length, subTotal=subs.length;
+    const subPct=subTotal?Math.round(subDone/subTotal*100):0;
     const ic=[t.done?'done-item':'',isExp?'expanded':'',
       !t.done&&st==='overdue'?'is-overdue':'',
       !t.done&&daysLeft!==null&&daysLeft>=0&&daysLeft<=remindDays?'is-due-soon':''
@@ -586,6 +620,7 @@ function render() {
             <span class="cat-badge" style="background:${rgba(cat.color,.13)};color:${cat.color}">
               <span class="cat-dot" style="background:${cat.color}"></span>${esc(cat.name)}
             </span>
+            ${subTotal>0?`<span class="sub-ind"><i class="ti ti-checkbox" style="font-size:11px"></i> ${subDone}/${subTotal}</span>`:''}
             ${hasNote&&!isExp?`<span class="note-ind"><i class="ti ti-notes" style="font-size:11px"></i> Ghi chú</span>`:''}
           </div>
           ${buildDrBlock(t)}
@@ -596,7 +631,26 @@ function render() {
           <button class="icon-btn expand-btn" onclick="toggleExpand(${t.id})"><i class="ti ti-chevron-down"></i></button>
         </div>
       </div>
-      <div class="note-panel">
+      <div class="subtask-section" style="display:${isExp?'block':'none'}">
+        <div class="subtask-header">
+          <div class="subtask-lbl"><i class="ti ti-checkbox" style="font-size:12px"></i> Đầu việc nhỏ</div>
+          ${subTotal>0?`<span class="subtask-prog">${subDone}/${subTotal} hoàn thành</span>`:''}
+        </div>
+        ${subTotal>0?`<div class="subtask-prog-bar-wrap"><div class="subtask-prog-bar" style="width:${subPct}%"></div></div>`:''}
+        <div class="subtask-list">
+          ${subs.map(s=>`
+            <div class="subtask-row">
+              <button class="sub-check ${s.done?'checked':''}" onclick="toggleSub(${t.id},${s.id})"></button>
+              <span class="sub-name ${s.done?'done':''}">${esc(s.name)}</span>
+              <button class="sub-del" onclick="deleteSub(${t.id},${s.id})"><i class="ti ti-x"></i></button>
+            </div>`).join('')}
+        </div>
+        <div class="subtask-add-row">
+          <input type="text" id="sub-input-${t.id}" placeholder="Thêm đầu việc nhỏ..." onkeydown="if(event.key==='Enter')addSub(${t.id})" />
+          <button class="btn-sub-add" onclick="addSub(${t.id})"><i class="ti ti-plus"></i> Thêm</button>
+        </div>
+      </div>
+      <div class="note-panel" style="${isExp?'':'display:none'}">
         <div class="note-lbl"><i class="ti ti-notes"></i> Ghi chú</div>
         <textarea class="note-ta" id="note-ta-${t.id}" placeholder="Thêm ghi chú, liên kết, chi tiết...">${esc(t.note||'')}</textarea>
         <div class="note-footer">
@@ -606,6 +660,27 @@ function render() {
       </div>
     </div>`;
   }).join('');
+}
+
+// Subtasks
+function addSub(taskId) {
+  const input = document.getElementById('sub-input-'+taskId);
+  const name = input.value.trim(); if (!name) { input.focus(); return; }
+  const t = state.tasks.find(t=>t.id===taskId); if (!t) return;
+  if (!t.subtasks) t.subtasks = [];
+  t.subtasks.push({ id: Date.now(), name, done: false });
+  input.value = ''; save(); render();
+  // re-focus after render
+  setTimeout(() => { const el = document.getElementById('sub-input-'+taskId); if(el) el.focus(); }, 50);
+}
+function toggleSub(taskId, subId) {
+  const t = state.tasks.find(t=>t.id===taskId); if (!t||!t.subtasks) return;
+  const s = t.subtasks.find(s=>s.id===subId); if (!s) return;
+  s.done = !s.done; save(); render();
+}
+function deleteSub(taskId, subId) {
+  const t = state.tasks.find(t=>t.id===taskId); if (!t||!t.subtasks) return;
+  t.subtasks = t.subtasks.filter(s=>s.id!==subId); save(); render();
 }
 
 // Edit modal
