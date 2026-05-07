@@ -10,51 +10,62 @@
   :root {
     --bg: #ffffff; --bg2: #f5f5f4; --bg3: #e8e8e6;
     --text1: #1c1917; --text2: #57534e; --text3: #a8a29e;
-    --border1: #d6d3d1; --border2: #e7e5e4; --border3: #f0efee;
+    --border1: #d6d3d1; --border2: #e7e5e4;
     --accent: #BA7517; --accent-dark: #854F0B;
-    --green: #1D9E75; --red: #993C1D; --radius: 10px;
-    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    --green: #1D9E75; --red: #993C1D;
+    --radius: 10px; --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root {
       --bg: #1c1917; --bg2: #292524; --bg3: #3c3836;
       --text1: #fafaf9; --text2: #a8a29e; --text3: #57534e;
-      --border1: #44403c; --border2: #292524; --border3: #1c1917;
+      --border1: #44403c; --border2: #292524;
     }
   }
   body { font-family: var(--font); background: var(--bg2); color: var(--text1); min-height: 100vh; }
-  .app { max-width: 700px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+  .app { max-width: 720px; margin: 0 auto; padding: 2rem 1rem 4rem; }
 
-  /* Header */
-  .header { margin-bottom: 1.5rem; }
-  .date-label { font-size: 11px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
-  .title { font-size: 24px; font-weight: 600; color: var(--text1); }
+  .header { margin-bottom: 1.5rem; display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .header-left .date-label { font-size: 11px; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 4px; }
+  .header-left .title { font-size: 24px; font-weight: 600; }
+  .notif-btn { display: flex; align-items: center; gap: 6px; height: 34px; padding: 0 14px; border-radius: 99px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font); }
+  .notif-btn:hover { background: var(--bg); }
+  .notif-btn.on { background: #EAF3DE; border-color: #3B6D11; color: #3B6D11; }
+  .notif-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--text3); }
+  .notif-btn.on .notif-dot { background: var(--green); }
 
-  /* Stats */
-  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 12px; }
-  .stat-card { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); padding: 12px 14px; }
-  .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 3px; }
-  .stat-val { font-size: 22px; font-weight: 600; color: var(--text1); }
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; margin-bottom: 12px; }
+  @media(max-width:500px){ .stats-row { grid-template-columns: repeat(2,1fr); } }
+  .stat-card { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); padding: 10px 12px; }
+  .stat-label { font-size: 11px; color: var(--text3); margin-bottom: 2px; }
+  .stat-val { font-size: 20px; font-weight: 600; }
   .stat-val.s-done { color: var(--green); }
   .stat-val.s-pending { color: var(--accent); }
+  .stat-val.s-overdue { color: var(--red); }
   .progress-wrap { height: 4px; background: var(--bg3); border-radius: 99px; margin-bottom: 1.5rem; overflow: hidden; }
-  .progress-bar { height: 4px; background: var(--green); border-radius: 99px; transition: width .4s ease; }
+  .progress-bar { height: 4px; background: var(--green); border-radius: 99px; transition: width .4s; }
 
-  /* Add area */
+  .remind-bar { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); padding: 10px 14px; margin-bottom: 1.25rem; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .remind-bar label { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 6px; }
+  .remind-bar select { font-size: 13px; height: 30px; padding: 0 8px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text1); outline: none; font-family: var(--font); }
+  .remind-hint { font-size: 11px; color: var(--text3); margin-left: auto; }
+
   .add-area { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); padding: 1.1rem 1.25rem; margin-bottom: 1.25rem; }
   .add-row { display: flex; gap: 8px; margin-bottom: 10px; }
   .add-row input { flex: 1; font-size: 14px; height: 38px; padding: 0 12px; border-radius: 8px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text1); outline: none; font-family: var(--font); }
   .add-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(186,117,23,.15); }
-  .meta-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-  .meta-row select, .meta-row input[type=date] { font-size: 13px; height: 32px; padding: 0 8px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text2); outline: none; cursor: pointer; font-family: var(--font); }
-  .meta-row select:focus, .meta-row input[type=date]:focus { border-color: var(--accent); }
-  .btn-add { height: 38px; padding: 0 18px; border-radius: 8px; border: none; background: var(--accent); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; font-family: var(--font); }
+  .meta-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+  .meta-row select { font-size: 13px; height: 32px; padding: 0 8px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text2); outline: none; cursor: pointer; font-family: var(--font); }
+  .date-range-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 0; }
+  .date-range-row input[type=date] { font-size: 13px; height: 32px; padding: 0 8px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text2); outline: none; font-family: var(--font); }
+  .date-range-row input[type=date]:focus { border-color: var(--accent); }
+  .dr-label { font-size: 12px; color: var(--text3); white-space: nowrap; display: flex; align-items: center; gap: 4px; }
+  .dr-arrow { font-size: 14px; color: var(--text3); }
+  .btn-add { height: 38px; padding: 0 18px; border-radius: 8px; border: none; background: var(--accent); color: #fff; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; font-family: var(--font); }
   .btn-add:hover { background: var(--accent-dark); }
-  .btn-add:active { transform: scale(.98); }
 
-  /* Cat manage */
   .cat-manage { display: flex; align-items: center; gap: 6px; margin-top: 10px; padding-top: 10px; border-top: .5px solid var(--border2); flex-wrap: wrap; }
-  .cat-manage-label { font-size: 12px; color: var(--text3); flex-shrink: 0; }
+  .cat-manage-lbl { font-size: 12px; color: var(--text3); flex-shrink: 0; }
   .cat-manage input[type=text] { font-size: 13px; height: 30px; padding: 0 10px; border-radius: 7px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text1); outline: none; width: 130px; font-family: var(--font); }
   .cat-manage input[type=color] { width: 30px; height: 30px; border: .5px solid var(--border1); border-radius: 7px; cursor: pointer; padding: 2px; background: var(--bg2); }
   .btn-sm { height: 30px; padding: 0 12px; border-radius: 7px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; font-family: var(--font); }
@@ -64,59 +75,66 @@
   .cat-chip:hover .chip-x { display: inline; }
   .chip-x { display: none; font-size: 10px; opacity: .6; }
 
-  /* Toolbar */
   .toolbar { display: flex; gap: 8px; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
-  .filter-group { display: flex; gap: 4px; flex-wrap: wrap; }
-  .filter-btn { height: 28px; padding: 0 12px; border-radius: 99px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: var(--font); }
-  .filter-btn.active { background: var(--bg); border-color: var(--text2); color: var(--text1); font-weight: 500; }
-  .filter-btn:hover:not(.active) { background: var(--bg); }
-  .vdivider { width: .5px; background: var(--border2); height: 20px; align-self: center; }
+  .fg { display: flex; gap: 4px; flex-wrap: wrap; }
+  .fb { height: 28px; padding: 0 12px; border-radius: 99px; border: .5px solid var(--border1); background: transparent; color: var(--text2); font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px; white-space: nowrap; font-family: var(--font); }
+  .fb.active { background: var(--bg); border-color: var(--text2); color: var(--text1); font-weight: 500; }
+  .fb:hover:not(.active) { background: var(--bg); }
+  .vd { width: .5px; background: var(--border2); height: 20px; align-self: center; }
   .cat-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
 
-  /* Drag hint */
   .drag-hint { font-size: 11px; color: var(--text3); text-align: right; margin-bottom: 6px; }
-  .section-label { font-size: 11px; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; padding-left: 2px; }
+  .section-lbl { font-size: 11px; color: var(--text3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; padding-left: 2px; }
 
-  /* Task list */
   .task-list { display: flex; flex-direction: column; gap: 6px; }
   .task-item { background: var(--bg); border: .5px solid var(--border2); border-radius: var(--radius); transition: border-color .15s; user-select: none; }
   .task-item:hover { border-color: var(--border1); }
   .task-item.expanded { border-color: var(--border1); }
-  .task-item.done-item { opacity: .5; }
+  .task-item.done-item { opacity: .48; }
   .task-item.dragging { opacity: .3; border-style: dashed; }
   .task-item.drag-over { border-color: var(--accent); border-width: 1px; }
+  .task-item.is-overdue { border-left: 3px solid var(--red); }
+  .task-item.is-due-soon { border-left: 3px solid var(--accent); }
 
-  .task-main { display: flex; align-items: flex-start; gap: 8px; padding: 12px 12px; cursor: default; }
+  .task-main { display: flex; align-items: flex-start; gap: 8px; padding: 12px; }
   .drag-handle { color: var(--text3); cursor: grab; flex-shrink: 0; padding-top: 2px; font-size: 16px; opacity: 0; transition: opacity .15s; }
   .task-item:hover .drag-handle { opacity: 1; }
-  .drag-handle:active { cursor: grabbing; }
   .check-btn { width: 20px; height: 20px; min-width: 20px; border-radius: 50%; border: 1.5px solid var(--border1); background: transparent; cursor: pointer; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; transition: all .15s; }
   .check-btn.checked { background: var(--green); border-color: var(--green); }
   .check-btn.checked::after { content:''; display:block; width:10px; height:6px; border-left:2px solid #fff; border-bottom:2px solid #fff; transform:rotate(-45deg) translate(1px,-1px); }
   .task-body { flex: 1; min-width: 0; }
-  .task-name { font-size: 14px; color: var(--text1); line-height: 1.4; word-break: break-word; }
+  .task-name { font-size: 14px; line-height: 1.4; word-break: break-word; }
   .done-item .task-name { text-decoration: line-through; color: var(--text3); }
   .task-meta { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; align-items: center; }
   .p-badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; }
-  .p-cao { background: #FAECE7; color: #993C1D; }
-  .p-trung { background: #FAEEDA; color: #854F0B; }
-  .p-thap { background: #EAF3DE; color: #3B6D11; }
+  .p-cao { background:#FAECE7; color:#993C1D; }
+  .p-trung { background:#FAEEDA; color:#854F0B; }
+  .p-thap { background:#EAF3DE; color:#3B6D11; }
   .cat-badge { font-size: 11px; padding: 2px 8px; border-radius: 99px; font-weight: 500; display: flex; align-items: center; gap: 4px; }
-  .dl-text { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 3px; }
-  .dl-text.overdue { color: var(--red); }
   .note-ind { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 3px; }
+
+  /* Date range block */
+  .dr-block { margin-top: 7px; }
+  .dr-badge { font-size: 11px; display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 99px; border: .5px solid var(--border2); color: var(--text2); background: var(--bg2); }
+  .dr-badge.overdue { color: #993C1D; background: #FAECE7; border-color: #f5c6b8; }
+  .dr-badge.due-soon { color: #854F0B; background: #FAEEDA; border-color: #f5d9a8; }
+  .dr-badge.in-progress { color: #1a6b4a; background: #e6f7f1; border-color: #a7e0cc; }
+  .timeline-track { height: 4px; background: var(--bg3); border-radius: 99px; margin-top: 6px; overflow: hidden; }
+  .timeline-fill { height: 4px; border-radius: 99px; transition: width .3s; }
+  .timeline-labels { display: flex; justify-content: space-between; margin-top: 3px; }
+  .tl-lbl { font-size: 10px; color: var(--text3); }
+
   .task-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-  .icon-btn { border: none; background: transparent; color: var(--text3); cursor: pointer; padding: 4px 5px; border-radius: 6px; font-size: 15px; line-height: 1; opacity: 0; transition: opacity .15s; font-family: var(--font); }
+  .icon-btn { border: none; background: transparent; color: var(--text3); cursor: pointer; padding: 4px 5px; border-radius: 6px; font-size: 15px; line-height: 1; opacity: 0; transition: opacity .15s; }
   .task-item:hover .icon-btn { opacity: 1; }
   .icon-btn:hover { background: var(--bg2); color: var(--text2); }
   .icon-btn.del:hover { color: #E24B4A; background: #FCEBEB; }
-  .expand-btn { opacity: 1 !important; transition: transform .2s, opacity .15s !important; }
+  .expand-btn { opacity: 1 !important; transition: transform .2s !important; }
   .task-item.expanded .expand-btn { transform: rotate(180deg); }
 
-  /* Note panel */
   .note-panel { border-top: .5px solid var(--border2); padding: 10px 12px 12px 42px; display: none; }
   .task-item.expanded .note-panel { display: block; }
-  .note-label { font-size: 11px; color: var(--text3); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
+  .note-lbl { font-size: 11px; color: var(--text3); margin-bottom: 6px; display: flex; align-items: center; gap: 5px; }
   .note-ta { width: 100%; font-size: 13px; font-family: var(--font); color: var(--text1); background: var(--bg2); border: .5px solid var(--border1); border-radius: 8px; padding: 8px 10px; resize: vertical; min-height: 76px; outline: none; line-height: 1.6; }
   .note-ta:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(186,117,23,.12); }
   .note-ta::placeholder { color: var(--text3); }
@@ -126,11 +144,8 @@
   .btn-xs.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
   .btn-xs.primary:hover { background: var(--accent-dark); }
 
-  /* Empty */
   .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
   .empty i { font-size: 36px; display: block; margin-bottom: 8px; }
-
-  /* Toast */
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--text1); color: var(--bg); font-size: 13px; padding: 8px 18px; border-radius: 99px; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 999; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
@@ -138,16 +153,38 @@
 <body>
 <div class="app">
   <div class="header">
-    <div class="date-label" id="date-label"></div>
-    <div class="title">Công việc của tôi</div>
+    <div class="header-left">
+      <div class="date-label" id="date-label"></div>
+      <div class="title">Công việc của tôi</div>
+    </div>
+    <button class="notif-btn" id="notif-btn" onclick="toggleNotif()">
+      <span class="notif-dot"></span>
+      <span id="notif-txt">Bật nhắc nhở</span>
+    </button>
   </div>
 
   <div class="stats-row">
     <div class="stat-card"><div class="stat-label">Tổng cộng</div><div class="stat-val" id="s-total">0</div></div>
     <div class="stat-card"><div class="stat-label">Hoàn thành</div><div class="stat-val s-done" id="s-done">0</div></div>
     <div class="stat-card"><div class="stat-label">Còn lại</div><div class="stat-val s-pending" id="s-pending">0</div></div>
+    <div class="stat-card"><div class="stat-label">Quá hạn</div><div class="stat-val s-overdue" id="s-overdue">0</div></div>
   </div>
   <div class="progress-wrap"><div class="progress-bar" id="progress-bar" style="width:0%"></div></div>
+
+  <div class="remind-bar" id="remind-bar" style="display:none">
+    <i class="ti ti-bell-ringing" style="color:var(--accent);font-size:16px"></i>
+    <label>Nhắc trước
+      <select id="remind-days" onchange="saveRemindDays()">
+        <option value="1">1 ngày</option>
+        <option value="2">2 ngày</option>
+        <option value="3" selected>3 ngày</option>
+        <option value="5">5 ngày</option>
+        <option value="7">7 ngày</option>
+      </select>
+      khi sắp đến hạn kết thúc
+    </label>
+    <span class="remind-hint" id="remind-hint"></span>
+  </div>
 
   <div class="add-area">
     <div class="add-row">
@@ -161,10 +198,15 @@
         <option value="thap">🟢 Thấp</option>
       </select>
       <select id="cat-sel"></select>
-      <input type="date" id="dl-input" />
+    </div>
+    <div class="date-range-row">
+      <span class="dr-label"><i class="ti ti-calendar-event" style="font-size:13px"></i> Thời gian:</span>
+      <input type="date" id="start-input" title="Ngày bắt đầu" />
+      <span class="dr-arrow">→</span>
+      <input type="date" id="end-input" title="Ngày kết thúc" />
     </div>
     <div class="cat-manage">
-      <span class="cat-manage-label">Danh mục mới:</span>
+      <span class="cat-manage-lbl">Danh mục mới:</span>
       <input type="text" id="new-cat-name" placeholder="Tên danh mục" maxlength="20" />
       <input type="color" id="new-cat-color" value="#5DCAA5" />
       <button class="btn-sm" onclick="addCat()">+ Tạo</button>
@@ -173,235 +215,308 @@
   </div>
 
   <div class="toolbar">
-    <div class="filter-group" id="f-status">
-      <button class="filter-btn active" onclick="setF('status','all',this)">Tất cả</button>
-      <button class="filter-btn" onclick="setF('status','active',this)">Chưa xong</button>
-      <button class="filter-btn" onclick="setF('status','done',this)">Đã xong</button>
+    <div class="fg" id="f-status">
+      <button class="fb active" onclick="setF('status','all',this)">Tất cả</button>
+      <button class="fb" onclick="setF('status','active',this)">Chưa xong</button>
+      <button class="fb" onclick="setF('status','done',this)">Đã xong</button>
+      <button class="fb" onclick="setF('status','overdue',this)">⚠️ Quá hạn</button>
     </div>
-    <div class="vdivider"></div>
-    <div class="filter-group" id="f-priority">
-      <button class="filter-btn active" onclick="setF('priority','all',this)">Mọi ưu tiên</button>
-      <button class="filter-btn" onclick="setF('priority','cao',this)">🔴 Cao</button>
-      <button class="filter-btn" onclick="setF('priority','trung',this)">🟡 TB</button>
-      <button class="filter-btn" onclick="setF('priority','thap',this)">🟢 Thấp</button>
+    <div class="vd"></div>
+    <div class="fg" id="f-priority">
+      <button class="fb active" onclick="setF('priority','all',this)">Mọi mức độ ưu tiên</button>
+      <button class="fb" onclick="setF('priority','cao',this)">🔴 Cao</button>
+      <button class="fb" onclick="setF('priority','trung',this)">🟡 TB</button>
+      <button class="fb" onclick="setF('priority','thap',this)">🟢 Thấp</button>
     </div>
-    <div class="vdivider"></div>
-    <div class="filter-group" id="f-cat"></div>
+    <div class="vd"></div>
+    <div class="fg" id="f-cat"></div>
   </div>
 
-  <div class="drag-hint"><i class="ti ti-grip-vertical" style="font-size:11px;vertical-align:-1px"></i> Kéo thả để sắp xếp &nbsp;·&nbsp; <i class="ti ti-chevron-down" style="font-size:11px;vertical-align:-1px"></i> Bấm mũi tên để ghi chú</div>
-  <div class="section-label" id="list-label">Danh sách</div>
+  <div class="drag-hint"><i class="ti ti-grip-vertical" style="font-size:11px;vertical-align:-1px"></i> Kéo thả để sắp xếp</div>
+  <div class="section-lbl" id="list-label">Danh sách</div>
   <div class="task-list" id="task-list"></div>
 </div>
 <div class="toast" id="toast"></div>
 
 <script>
-// ── State ─────────────────────────────────────────────────
-const STORAGE_KEY = 'mytasks_v1';
+const KEY = 'mytasks_v2';
 let state = load();
-let expandedId = null;
-let dragSrcId = null;
+let expandedId = null, dragSrcId = null;
 let filters = { status:'all', priority:'all', cat:'all' };
+let notifOn = localStorage.getItem('notif_on') === '1';
+let remindDays = parseInt(localStorage.getItem('remind_days') || '3');
+let notifTimer = null;
 
 function load() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
-  } catch(_) {}
+  try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch(_) {}
   return {
-    nextId: 7,
+    nextId: 5,
     categories: [
-      { id:'cv', name:'Công việc', color:'#378ADD' },
-      { id:'cn', name:'Cá nhân',  color:'#D4537E' },
-      { id:'ht', name:'Học tập',  color:'#639922' },
-      { id:'kh', name:'Kế hoạch', color:'#EF9F27' },
+      {id:'es',name:'eSign',color:'#378ADD'},
+      {id:'cs',name:'CS',color:'#639922'},
+      {id:'cn',name:'Cá nhân',color:'#D4537E'},
+      
     ],
     tasks: [
-      { id:1, name:'Đọc tài liệu dự án buổi sáng', priority:'cao',  cat:'cv', deadline:'', done:false, note:'Tập trung vào phần SRS và use case. Ghi lại các điểm chưa rõ.' },
-      { id:2, name:'Họp team standup lúc 9h',        priority:'cao',  cat:'cv', deadline:'', done:true,  note:'' },
-      { id:3, name:'Viết báo cáo tuần',               priority:'trung',cat:'cv', deadline:'', done:false, note:'' },
-      { id:4, name:'Ôn lại kiến thức SQL',             priority:'trung',cat:'ht', deadline:'', done:false, note:'Window functions, CTE, index optimization.' },
-      { id:5, name:'Tập thể dục 30 phút',             priority:'thap', cat:'cn', deadline:'', done:false, note:'' },
-      { id:6, name:'Lên kế hoạch tháng tới',          priority:'trung',cat:'kh', deadline:'', done:false, note:'' },
+      {id:1,name:'Viết báo cáo dự án Q2',priority:'cao',cat:'es',start:'2025-05-01',end:'2025-05-15',done:false,note:'Tập trung phần phân tích số liệu và biểu đồ.'},
+      {id:2,name:'Ôn thi chứng chỉ SQL',priority:'trung',cat:'cs',start:'2025-05-05',end:'2025-05-25',done:false,note:'Window functions, CTE, index.'},
+      {id:3,name:'Tập thể dục mỗi ngày',priority:'thap',cat:'cn',start:'2025-05-01',end:'2025-05-31',done:false,note:''},
+      {id:4,name:'Lên kế hoạch tháng 6',priority:'trung',cat:'cn',start:'2025-05-20',end:'2025-05-30',done:false,note:''},
     ]
   };
 }
-function save() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(_) {} }
-
-// ── Helpers ───────────────────────────────────────────────
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(_) {} }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function rgba(hex, a) {
-  const r=parseInt(hex.slice(1,3),16), g=parseInt(hex.slice(3,5),16), b=parseInt(hex.slice(5,7),16);
-  return `rgba(${r},${g},${b},${a})`;
-}
+function rgba(hex,a) { const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
+function today0() { const d=new Date(); d.setHours(0,0,0,0); return d; }
+function parseDate(s) { if(!s) return null; const d=new Date(s+'T00:00:00'); return isNaN(d)?null:d; }
+function diffDays(a,b) { return Math.round((b-a)/86400000); }
+function fmtDate(s) { const d=parseDate(s); if(!d) return ''; return `${d.getDate()}/${d.getMonth()+1}/${d.getFullYear()}`; }
 function showToast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 2000);
-}
-function fmtDeadline(dl) {
-  if (!dl) return null;
-  const d = new Date(dl+'T00:00:00'), today = new Date(); today.setHours(0,0,0,0);
-  const diff = Math.round((d-today)/86400000);
-  if (diff < 0) return { text:`Quá hạn ${Math.abs(diff)} ngày`, overdue:true };
-  if (diff === 0) return { text:'Hôm nay', overdue:false };
-  if (diff === 1) return { text:'Ngày mai', overdue:false };
-  return { text:`Còn ${diff} ngày`, overdue:false };
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-// ── Date header ───────────────────────────────────────────
-const DAYS = ['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
-const MONTHS = ['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6','tháng 7','tháng 8','tháng 9','tháng 10','tháng 11','tháng 12'];
-const now = new Date();
-document.getElementById('date-label').textContent = `${DAYS[now.getDay()]}, ngày ${now.getDate()} ${MONTHS[now.getMonth()]} ${now.getFullYear()}`;
+// Date header
+const DAYS=['Chủ nhật','Thứ hai','Thứ ba','Thứ tư','Thứ năm','Thứ sáu','Thứ bảy'];
+const MONTHS=['tháng 1','tháng 2','tháng 3','tháng 4','tháng 5','tháng 6','tháng 7','tháng 8','tháng 9','tháng 10','tháng 11','tháng 12'];
+const NOW=new Date();
+document.getElementById('date-label').textContent=`${DAYS[NOW.getDay()]}, ngày ${NOW.getDate()} ${MONTHS[NOW.getMonth()]} ${NOW.getFullYear()}`;
+document.getElementById('start-input').value=NOW.toISOString().slice(0,10);
 
-// ── Category controls ─────────────────────────────────────
+// Notification
+function updateNotifUI() {
+  const btn=document.getElementById('notif-btn'), bar=document.getElementById('remind-bar');
+  if (notifOn) {
+    btn.classList.add('on');
+    document.getElementById('notif-txt').textContent='Nhắc nhở: Bật';
+    bar.style.display='flex';
+  } else {
+    btn.classList.remove('on');
+    document.getElementById('notif-txt').textContent='Bật nhắc nhở';
+    bar.style.display='none';
+  }
+  document.getElementById('remind-days').value=remindDays;
+}
+async function toggleNotif() {
+  if (!('Notification' in window)) { showToast('Trình duyệt không hỗ trợ thông báo'); return; }
+  if (!notifOn) {
+    const perm=await Notification.requestPermission();
+    if (perm!=='granted') { showToast('Vui lòng cho phép thông báo trong trình duyệt'); return; }
+    notifOn=true; localStorage.setItem('notif_on','1');
+    showToast('Đã bật nhắc nhở! 🔔'); scheduleNotifs();
+  } else {
+    notifOn=false; localStorage.setItem('notif_on','0');
+    if (notifTimer) { clearInterval(notifTimer); notifTimer=null; }
+    showToast('Đã tắt nhắc nhở');
+  }
+  updateNotifUI(); render();
+}
+function saveRemindDays() {
+  remindDays=parseInt(document.getElementById('remind-days').value);
+  localStorage.setItem('remind_days',remindDays);
+  scheduleNotifs(); showToast(`Sẽ nhắc trước ${remindDays} ngày`); render();
+}
+function checkAndNotify() {
+  if (!notifOn||Notification.permission!=='granted') return;
+  const tod=today0();
+  const notified=JSON.parse(localStorage.getItem('notified_ids')||'{}');
+  state.tasks.filter(t=>!t.done&&t.end).forEach(t=>{
+    const end=parseDate(t.end); if(!end) return;
+    const diff=diffDays(tod,end);
+    const nKey=`${t.id}_${t.end}_${remindDays}`;
+    if (diff>=0&&diff<=remindDays&&!notified[nKey]) {
+      const msg=diff===0?`"${t.name}" — Hôm nay là hạn cuối!`:`"${t.name}" — Còn ${diff} ngày đến hạn kết thúc`;
+      new Notification('⏰ Nhắc việc sắp đến hạn',{body:msg});
+      notified[nKey]=true;
+    }
+  });
+  localStorage.setItem('notified_ids',JSON.stringify(notified));
+  updateRemindHint();
+}
+function updateRemindHint() {
+  const el=document.getElementById('remind-hint'); if(!el) return;
+  const tod=today0();
+  const n=state.tasks.filter(t=>{
+    if(t.done||!t.end) return false;
+    const e=parseDate(t.end); if(!e) return false;
+    const d=diffDays(tod,e); return d>=0&&d<=remindDays;
+  }).length;
+  el.textContent=n?`${n} việc sắp đến hạn`:'Không có việc sắp đến hạn';
+}
+function scheduleNotifs() {
+  if (notifTimer) clearInterval(notifTimer);
+  if (!notifOn) return;
+  checkAndNotify();
+  notifTimer=setInterval(checkAndNotify,60*60*1000);
+}
+
+// Category
 function buildCatSel() {
-  document.getElementById('cat-sel').innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  document.getElementById('cat-sel').innerHTML=state.categories.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
 }
 function buildCatChips() {
-  document.getElementById('cat-chips').innerHTML = state.categories.map(c =>
+  document.getElementById('cat-chips').innerHTML=state.categories.map(c=>
     `<span class="cat-chip" style="background:${rgba(c.color,.13)};color:${c.color};border-color:${rgba(c.color,.3)}" onclick="removeCat('${c.id}')">
       <span class="cat-dot" style="background:${c.color}"></span>${esc(c.name)}<span class="chip-x">✕</span>
     </span>`
   ).join('');
 }
 function buildCatFilters() {
-  document.getElementById('f-cat').innerHTML =
-    `<button class="filter-btn ${filters.cat==='all'?'active':''}" onclick="setF('cat','all',this)">Mọi DM</button>` +
-    state.categories.map(c =>
-      `<button class="filter-btn ${filters.cat===c.id?'active':''}" onclick="setF('cat','${c.id}',this)">
-        <span class="cat-dot" style="background:${c.color}"></span>${esc(c.name)}
-      </button>`
-    ).join('');
+  document.getElementById('f-cat').innerHTML=
+    `<button class="fb ${filters.cat==='all'?'active':''}" onclick="setF('cat','all',this)">Mọi phân loại công việc</button>`+
+    state.categories.map(c=>`<button class="fb ${filters.cat===c.id?'active':''}" onclick="setF('cat','${c.id}',this)">
+      <span class="cat-dot" style="background:${c.color}"></span>${esc(c.name)}</button>`).join('');
 }
 function addCat() {
-  const nameEl = document.getElementById('new-cat-name');
-  const name = nameEl.value.trim(); if (!name) { nameEl.focus(); return; }
-  const color = document.getElementById('new-cat-color').value;
-  state.categories.push({ id:'u'+Date.now(), name, color });
-  nameEl.value = ''; save(); buildCatSel(); buildCatChips(); buildCatFilters(); render();
-  showToast('Đã thêm danh mục');
+  const el=document.getElementById('new-cat-name'),name=el.value.trim(); if(!name){el.focus();return;}
+  state.categories.push({id:'u'+Date.now(),name,color:document.getElementById('new-cat-color').value});
+  el.value=''; save(); buildCatSel(); buildCatChips(); buildCatFilters(); render(); showToast('Đã thêm danh mục');
 }
 function removeCat(id) {
-  if (state.categories.length <= 1) { showToast('Cần ít nhất 1 danh mục'); return; }
-  state.categories = state.categories.filter(c => c.id !== id);
-  state.tasks.forEach(t => { if (t.cat === id) t.cat = state.categories[0].id; });
-  if (filters.cat === id) filters.cat = 'all';
+  if(state.categories.length<=1){showToast('Cần ít nhất 1 danh mục');return;}
+  state.categories=state.categories.filter(c=>c.id!==id);
+  state.tasks.forEach(t=>{if(t.cat===id)t.cat=state.categories[0].id;});
+  if(filters.cat===id)filters.cat='all';
   save(); buildCatSel(); buildCatChips(); buildCatFilters(); render();
 }
 
-// ── Task actions ──────────────────────────────────────────
+// Task
 function addTask() {
-  const input = document.getElementById('task-input');
-  const name = input.value.trim(); if (!name) { input.focus(); return; }
-  state.tasks.unshift({
-    id: state.nextId++,
-    name,
-    priority: document.getElementById('pri-sel').value,
-    cat: document.getElementById('cat-sel').value,
-    deadline: document.getElementById('dl-input').value,
-    done: false,
-    note: ''
-  });
-  input.value = ''; document.getElementById('dl-input').value = '';
+  const input=document.getElementById('task-input'),name=input.value.trim(); if(!name){input.focus();return;}
+  const start=document.getElementById('start-input').value, end=document.getElementById('end-input').value;
+  if(start&&end&&end<start){showToast('Ngày kết thúc phải sau ngày bắt đầu!');return;}
+  state.tasks.unshift({id:state.nextId++,name,priority:document.getElementById('pri-sel').value,
+    cat:document.getElementById('cat-sel').value,start,end,done:false,note:''});
+  input.value=''; document.getElementById('end-input').value='';
+  document.getElementById('start-input').value=NOW.toISOString().slice(0,10);
   save(); render(); showToast('Đã thêm công việc');
 }
-document.getElementById('task-input').addEventListener('keydown', e => { if (e.key === 'Enter') addTask(); });
-
+document.getElementById('task-input').addEventListener('keydown',e=>{if(e.key==='Enter')addTask();});
 function toggleDone(id) {
-  const t = state.tasks.find(t => t.id === id); if (!t) return;
-  t.done = !t.done; save(); render();
-  if (t.done) showToast('Hoàn thành! 🎉');
+  const t=state.tasks.find(t=>t.id===id); if(!t)return; t.done=!t.done; save(); render();
+  if(t.done)showToast('Hoàn thành! 🎉');
 }
 function deleteTask(id) {
-  if (!confirm('Xoá công việc này?')) return;
-  state.tasks = state.tasks.filter(t => t.id !== id);
-  if (expandedId === id) expandedId = null;
+  if(!confirm('Xoá công việc này?'))return;
+  state.tasks=state.tasks.filter(t=>t.id!==id); if(expandedId===id)expandedId=null;
   save(); render(); showToast('Đã xoá');
 }
 function toggleExpand(id) {
-  if (expandedId === id) { expandedId = null; }
-  else { if (expandedId !== null) persistNote(expandedId); expandedId = id; }
+  if(expandedId===id)expandedId=null;
+  else{if(expandedId!==null)persistNote(expandedId); expandedId=id;}
   render();
 }
 function persistNote(id) {
-  const ta = document.getElementById('note-ta-'+id); if (!ta) return;
-  const t = state.tasks.find(t => t.id === id); if (t) { t.note = ta.value; save(); }
+  const ta=document.getElementById('note-ta-'+id); if(!ta)return;
+  const t=state.tasks.find(t=>t.id===id); if(t){t.note=ta.value;save();}
 }
-function saveNote(id) { persistNote(id); expandedId = null; render(); showToast('Đã lưu ghi chú'); }
-function cancelNote(id) { expandedId = null; render(); }
+function saveNote(id){persistNote(id);expandedId=null;render();showToast('Đã lưu ghi chú');}
+function cancelNote(id){expandedId=null;render();}
 
-// ── Filters ───────────────────────────────────────────────
-function setF(type, val, btn) {
-  filters[type] = val;
-  const gMap = { status:'f-status', priority:'f-priority' };
-  if (gMap[type]) document.querySelectorAll(`#${gMap[type]} .filter-btn`).forEach(b => b.classList.remove('active'));
-  else document.querySelectorAll('#f-cat .filter-btn').forEach(b => b.classList.remove('active'));
+// Filters
+function setF(type,val,btn){
+  filters[type]=val;
+  const g={status:'f-status',priority:'f-priority'};
+  if(g[type])document.querySelectorAll(`#${g[type]} .fb`).forEach(b=>b.classList.remove('active'));
+  else document.querySelectorAll('#f-cat .fb').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active'); render();
 }
+function getStatus(t) {
+  if(t.done)return 'done';
+  const end=parseDate(t.end), tod=today0();
+  if(end&&diffDays(tod,end)<0)return 'overdue';
+  return 'active';
+}
 function getFiltered() {
-  return state.tasks.filter(t => {
-    if (filters.status === 'active' && t.done) return false;
-    if (filters.status === 'done' && !t.done) return false;
-    if (filters.priority !== 'all' && t.priority !== filters.priority) return false;
-    if (filters.cat !== 'all' && t.cat !== filters.cat) return false;
+  return state.tasks.filter(t=>{
+    const st=getStatus(t);
+    if(filters.status==='active'&&st!=='active')return false;
+    if(filters.status==='done'&&st!=='done')return false;
+    if(filters.status==='overdue'&&st!=='overdue')return false;
+    if(filters.priority!=='all'&&t.priority!==filters.priority)return false;
+    if(filters.cat!=='all'&&t.cat!==filters.cat)return false;
     return true;
   });
 }
 
-// ── Drag & Drop ───────────────────────────────────────────
-function onDragStart(e, id) {
-  dragSrcId = id;
-  setTimeout(() => { const el = document.querySelector(`[data-id="${id}"]`); if (el) el.classList.add('dragging'); }, 0);
-  e.dataTransfer.effectAllowed = 'move';
+// Drag
+function onDragStart(e,id){
+  dragSrcId=id;
+  setTimeout(()=>{const el=document.querySelector(`[data-id="${id}"]`);if(el)el.classList.add('dragging');},0);
+  e.dataTransfer.effectAllowed='move';
 }
-function onDragOver(e, id) {
+function onDragOver(e,id){
   e.preventDefault();
-  document.querySelectorAll('.task-item').forEach(el => el.classList.remove('drag-over'));
-  if (id !== dragSrcId) { const el = document.querySelector(`[data-id="${id}"]`); if (el) el.classList.add('drag-over'); }
+  document.querySelectorAll('.task-item').forEach(el=>el.classList.remove('drag-over'));
+  if(id!==dragSrcId){const el=document.querySelector(`[data-id="${id}"]`);if(el)el.classList.add('drag-over');}
 }
-function onDrop(e, targetId) {
-  e.preventDefault();
-  if (!dragSrcId || dragSrcId === targetId) return;
-  const si = state.tasks.findIndex(t => t.id === dragSrcId);
-  const ti = state.tasks.findIndex(t => t.id === targetId);
-  if (si === -1 || ti === -1) return;
-  const [moved] = state.tasks.splice(si, 1); state.tasks.splice(ti, 0, moved);
-  dragSrcId = null; save(); render();
+function onDrop(e,tid){
+  e.preventDefault(); if(!dragSrcId||dragSrcId===tid)return;
+  const si=state.tasks.findIndex(t=>t.id===dragSrcId),ti=state.tasks.findIndex(t=>t.id===tid);
+  if(si===-1||ti===-1)return;
+  const[m]=state.tasks.splice(si,1); state.tasks.splice(ti,0,m);
+  dragSrcId=null; save(); render();
 }
-function onDragEnd() {
-  document.querySelectorAll('.task-item').forEach(el => { el.classList.remove('dragging'); el.classList.remove('drag-over'); });
-  dragSrcId = null;
+function onDragEnd(){
+  document.querySelectorAll('.task-item').forEach(el=>{el.classList.remove('dragging');el.classList.remove('drag-over');});
+  dragSrcId=null;
 }
 
-// ── Render ────────────────────────────────────────────────
-function render() {
-  const done = state.tasks.filter(t => t.done).length, total = state.tasks.length;
-  document.getElementById('s-total').textContent = total;
-  document.getElementById('s-done').textContent = done;
-  document.getElementById('s-pending').textContent = total - done;
-  document.getElementById('progress-bar').style.width = (total ? Math.round(done/total*100) : 0) + '%';
-  buildCatFilters();
-  const filtered = getFiltered();
-  document.getElementById('list-label').textContent = `Hiển thị ${filtered.length} / ${total} công việc`;
-
-  const pLabel = { cao:'Cao', trung:'Trung bình', thap:'Thấp' };
-  const list = document.getElementById('task-list');
-  if (!filtered.length) {
-    list.innerHTML = `<div class="empty"><i class="ti ti-clipboard-list"></i>Không có công việc nào</div>`;
-    return;
+// Date range block
+function buildDrBlock(t) {
+  const tod=today0(), start=parseDate(t.start), end=parseDate(t.end);
+  if(!start&&!end) return '';
+  let txt='', cls='dr-badge', icon='ti-calendar';
+  if(start&&end){
+    const total=Math.max(diffDays(start,end),1);
+    const elapsed=Math.min(Math.max(diffDays(start,tod),0),total);
+    const pct=Math.round(elapsed/total*100);
+    const left=diffDays(tod,end);
+    if(!t.done&&left<0){ cls+=' overdue'; txt=`${fmtDate(t.start)} → ${fmtDate(t.end)} &nbsp;·&nbsp; Quá hạn ${Math.abs(left)} ngày`; icon='ti-alert-circle'; }
+    else if(!t.done&&left<=remindDays){ cls+=' due-soon'; txt=`${fmtDate(t.start)} → ${fmtDate(t.end)} &nbsp;·&nbsp; Còn ${left} ngày`; icon='ti-clock'; }
+    else if(!t.done&&tod>=start){ cls+=' in-progress'; txt=`${fmtDate(t.start)} → ${fmtDate(t.end)} &nbsp;·&nbsp; ${pct}%`; icon='ti-calendar-stats'; }
+    else { txt=`${fmtDate(t.start)} → ${fmtDate(t.end)}`; }
+    const fillColor=left<0?'var(--red)':left<=remindDays?'var(--accent)':'var(--green)';
+    const timeline=!t.done?`<div class="timeline-track"><div class="timeline-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+      <div class="timeline-labels"><span class="tl-lbl">${fmtDate(t.start)}</span><span class="tl-lbl">${fmtDate(t.end)}</span></div>`:'';
+    return `<div class="dr-block"><span class="${cls}"><i class="ti ${icon}" style="font-size:11px"></i> ${txt}</span>${timeline}</div>`;
   }
-  list.innerHTML = filtered.map(t => {
-    const dl = fmtDeadline(t.deadline);
-    const cat = state.categories.find(c => c.id === t.cat) || state.categories[0];
-    const isExp = expandedId === t.id;
-    const hasNote = t.note && t.note.trim().length > 0;
-    return `<div class="task-item ${t.done?'done-item':''} ${isExp?'expanded':''}" draggable="true" data-id="${t.id}"
+  if(start&&!end) txt=`Bắt đầu: ${fmtDate(t.start)}`;
+  if(!start&&end) txt=`Kết thúc: ${fmtDate(t.end)}`;
+  return `<div class="dr-block"><span class="${cls}"><i class="ti ${icon}" style="font-size:11px"></i> ${txt}</span></div>`;
+}
+
+// Render
+function render() {
+  const tod=today0();
+  const done=state.tasks.filter(t=>t.done).length, total=state.tasks.length;
+  const overdue=state.tasks.filter(t=>{if(t.done||!t.end)return false;const e=parseDate(t.end);return e&&diffDays(tod,e)<0;}).length;
+  document.getElementById('s-total').textContent=total;
+  document.getElementById('s-done').textContent=done;
+  document.getElementById('s-pending').textContent=total-done;
+  document.getElementById('s-overdue').textContent=overdue;
+  document.getElementById('progress-bar').style.width=(total?Math.round(done/total*100):0)+'%';
+  buildCatFilters(); updateRemindHint();
+  const filtered=getFiltered();
+  document.getElementById('list-label').textContent=`Hiển thị ${filtered.length} / ${total} công việc`;
+  const pLabel={cao:'Cao',trung:'Trung bình',thap:'Thấp'};
+  const list=document.getElementById('task-list');
+  if(!filtered.length){ list.innerHTML=`<div class="empty"><i class="ti ti-clipboard-list"></i>Không có công việc nào</div>`; return; }
+  list.innerHTML=filtered.map(t=>{
+    const cat=state.categories.find(c=>c.id===t.cat)||state.categories[0];
+    const isExp=expandedId===t.id, hasNote=t.note&&t.note.trim().length>0;
+    const st=getStatus(t);
+    const end=parseDate(t.end), daysLeft=end?diffDays(tod,end):null;
+    const ic=[t.done?'done-item':'',isExp?'expanded':'',
+      !t.done&&st==='overdue'?'is-overdue':'',
+      !t.done&&daysLeft!==null&&daysLeft>=0&&daysLeft<=remindDays?'is-due-soon':''
+    ].filter(Boolean).join(' ');
+    return `<div class="task-item ${ic}" draggable="true" data-id="${t.id}"
         ondragstart="onDragStart(event,${t.id})" ondragover="onDragOver(event,${t.id})" ondrop="onDrop(event,${t.id})" ondragend="onDragEnd()">
       <div class="task-main">
         <i class="ti ti-grip-vertical drag-handle"></i>
-        <button class="check-btn ${t.done?'checked':''}" onclick="toggleDone(${t.id})" title="${t.done?'Bỏ đánh dấu':'Hoàn thành'}"></button>
+        <button class="check-btn ${t.done?'checked':''}" onclick="toggleDone(${t.id})"></button>
         <div class="task-body">
           <div class="task-name">${esc(t.name)}</div>
           <div class="task-meta">
@@ -409,18 +524,18 @@ function render() {
             <span class="cat-badge" style="background:${rgba(cat.color,.13)};color:${cat.color}">
               <span class="cat-dot" style="background:${cat.color}"></span>${esc(cat.name)}
             </span>
-            ${dl ? `<span class="dl-text ${dl.overdue?'overdue':''}"><i class="ti ti-calendar" style="font-size:11px"></i> ${dl.text}</span>` : ''}
-            ${hasNote && !isExp ? `<span class="note-ind"><i class="ti ti-notes" style="font-size:11px"></i> Có ghi chú</span>` : ''}
+            ${hasNote&&!isExp?`<span class="note-ind"><i class="ti ti-notes" style="font-size:11px"></i> Ghi chú</span>`:''}
           </div>
+          ${buildDrBlock(t)}
         </div>
         <div class="task-actions">
-          <button class="icon-btn del" onclick="deleteTask(${t.id})" title="Xoá"><i class="ti ti-trash"></i></button>
-          <button class="icon-btn expand-btn" onclick="toggleExpand(${t.id})" title="${isExp?'Đóng':'Ghi chú'}"><i class="ti ti-chevron-down"></i></button>
+          <button class="icon-btn del" onclick="deleteTask(${t.id})"><i class="ti ti-trash"></i></button>
+          <button class="icon-btn expand-btn" onclick="toggleExpand(${t.id})"><i class="ti ti-chevron-down"></i></button>
         </div>
       </div>
       <div class="note-panel">
-        <div class="note-label"><i class="ti ti-notes"></i> Ghi chú</div>
-        <textarea class="note-ta" id="note-ta-${t.id}" placeholder="Thêm ghi chú, liên kết, chi tiết công việc...">${esc(t.note||'')}</textarea>
+        <div class="note-lbl"><i class="ti ti-notes"></i> Ghi chú</div>
+        <textarea class="note-ta" id="note-ta-${t.id}" placeholder="Thêm ghi chú, liên kết, chi tiết...">${esc(t.note||'')}</textarea>
         <div class="note-footer">
           <button class="btn-xs" onclick="cancelNote(${t.id})">Huỷ</button>
           <button class="btn-xs primary" onclick="saveNote(${t.id})"><i class="ti ti-check" style="font-size:12px;vertical-align:-1px"></i> Lưu ghi chú</button>
@@ -430,7 +545,10 @@ function render() {
   }).join('');
 }
 
-buildCatSel(); buildCatChips(); buildCatFilters(); render();
+// Init
+buildCatSel(); buildCatChips(); buildCatFilters(); updateNotifUI();
+if(notifOn&&Notification.permission==='granted') scheduleNotifs();
+render();
 </script>
 </body>
 </html>
