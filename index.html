@@ -783,6 +783,32 @@ function importData(e) {
 }
 
 // (Firebase onValue handles init above)
+
+// Expose functions to global scope (required for onclick in HTML with type=module)
+window.addTask = addTask;
+window.toggleDone = toggleDone;
+window.deleteTask = deleteTask;
+window.toggleExpand = toggleExpand;
+window.saveNote = saveNote;
+window.cancelNote = cancelNote;
+window.addSub = addSub;
+window.toggleSub = toggleSub;
+window.deleteSub = deleteSub;
+window.openEdit = openEdit;
+window.closeEdit = closeEdit;
+window.saveEdit = saveEdit;
+window.closeEditOnOverlay = closeEditOnOverlay;
+window.toggleNotif = toggleNotif;
+window.saveRemindDays = saveRemindDays;
+window.setF = setF;
+window.addCat = addCat;
+window.removeCat = removeCat;
+window.exportData = exportData;
+window.importData = importData;
+window.onDragStart = onDragStart;
+window.onDragOver = onDragOver;
+window.onDrop = onDrop;
+window.onDragEnd = onDragEnd;
 </script>
 </body>
 </html>
