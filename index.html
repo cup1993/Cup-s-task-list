@@ -148,6 +148,25 @@
   .empty i { font-size: 36px; display: block; margin-bottom: 8px; }
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--text1); color: var(--bg); font-size: 13px; padding: 8px 18px; border-radius: 99px; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 999; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Edit modal */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 1rem; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--bg); border-radius: 14px; width: 100%; max-width: 480px; box-shadow: 0 20px 60px rgba(0,0,0,.25); transform: translateY(16px) scale(.97); transition: transform .2s; }
+  .modal-overlay.open .modal { transform: translateY(0) scale(1); }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px 12px; border-bottom: .5px solid var(--border2); }
+  .modal-title { font-size: 15px; font-weight: 600; display: flex; align-items: center; gap: 7px; }
+  .modal-close { border: none; background: transparent; color: var(--text3); cursor: pointer; font-size: 20px; padding: 2px 4px; border-radius: 6px; line-height: 1; }
+  .modal-close:hover { background: var(--bg2); color: var(--text2); }
+  .modal-body { padding: 16px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .modal-field { display: flex; flex-direction: column; gap: 5px; }
+  .modal-label { font-size: 12px; color: var(--text3); font-weight: 500; letter-spacing: .03em; }
+  .modal-input { font-size: 14px; height: 38px; padding: 0 12px; border-radius: 8px; border: .5px solid var(--border1); background: var(--bg2); color: var(--text1); outline: none; font-family: var(--font); width: 100%; }
+  .modal-input:focus { border-color: var(--accent); box-shadow: 0 0 0 2px rgba(186,117,23,.15); }
+  .modal-row { display: flex; gap: 10px; }
+  .modal-row .modal-field { flex: 1; }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; padding: 12px 18px 16px; border-top: .5px solid var(--border2); }
+  .icon-btn.edit:hover { color: var(--accent); background: #FAEEDA; }
 </style>
 </head>
 <body>
@@ -236,6 +255,49 @@
   <div class="section-lbl" id="list-label">Danh sách</div>
   <div class="task-list" id="task-list"></div>
 </div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="edit-overlay" onclick="closeEditOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title"><i class="ti ti-edit" style="color:var(--accent)"></i> Chỉnh sửa công việc</div>
+      <button class="modal-close" onclick="closeEdit()"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-field">
+        <div class="modal-label">TÊN CÔNG VIỆC</div>
+        <input class="modal-input" type="text" id="edit-name" placeholder="Tên công việc..." />
+      </div>
+      <div class="modal-row">
+        <div class="modal-field">
+          <div class="modal-label">MỨC ĐỘ ƯU TIÊN</div>
+          <select class="modal-input" id="edit-priority">
+            <option value="cao">🔴 Ưu tiên cao</option>
+            <option value="trung">🟡 Trung bình</option>
+            <option value="thap">🟢 Thấp</option>
+          </select>
+        </div>
+        <div class="modal-field">
+          <div class="modal-label">PHÂN LOẠI</div>
+          <select class="modal-input" id="edit-cat"></select>
+        </div>
+      </div>
+      <div class="modal-field">
+        <div class="modal-label">THỜI GIAN THỰC HIỆN</div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="modal-input" type="date" id="edit-start" style="flex:1" />
+          <span style="color:var(--text3);font-size:14px">→</span>
+          <input class="modal-input" type="date" id="edit-end" style="flex:1" />
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-xs" onclick="closeEdit()">Huỷ</button>
+      <button class="btn-xs primary" onclick="saveEdit()"><i class="ti ti-check" style="font-size:12px;vertical-align:-1px"></i> Lưu thay đổi</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -529,6 +591,7 @@ function render() {
           ${buildDrBlock(t)}
         </div>
         <div class="task-actions">
+          <button class="icon-btn edit" onclick="openEdit(${t.id})" title="Chỉnh sửa"><i class="ti ti-edit"></i></button>
           <button class="icon-btn del" onclick="deleteTask(${t.id})"><i class="ti ti-trash"></i></button>
           <button class="icon-btn expand-btn" onclick="toggleExpand(${t.id})"><i class="ti ti-chevron-down"></i></button>
         </div>
@@ -544,6 +607,42 @@ function render() {
     </div>`;
   }).join('');
 }
+
+// Edit modal
+let editingId = null;
+function openEdit(id) {
+  const t = state.tasks.find(t => t.id === id); if (!t) return;
+  editingId = id;
+  document.getElementById('edit-name').value = t.name;
+  document.getElementById('edit-priority').value = t.priority;
+  // build cat options
+  const catSel = document.getElementById('edit-cat');
+  catSel.innerHTML = state.categories.map(c => `<option value="${c.id}">${c.name}</option>`).join('');
+  catSel.value = t.cat;
+  document.getElementById('edit-start').value = t.start || '';
+  document.getElementById('edit-end').value = t.end || '';
+  document.getElementById('edit-overlay').classList.add('open');
+  setTimeout(() => document.getElementById('edit-name').focus(), 150);
+}
+function closeEdit() {
+  document.getElementById('edit-overlay').classList.remove('open');
+  editingId = null;
+}
+function closeEditOnOverlay(e) { if (e.target === document.getElementById('edit-overlay')) closeEdit(); }
+function saveEdit() {
+  const t = state.tasks.find(t => t.id === editingId); if (!t) return;
+  const name = document.getElementById('edit-name').value.trim();
+  if (!name) { document.getElementById('edit-name').focus(); return; }
+  const start = document.getElementById('edit-start').value;
+  const end = document.getElementById('edit-end').value;
+  if (start && end && end < start) { showToast('Ngày kết thúc phải sau ngày bắt đầu!'); return; }
+  t.name = name;
+  t.priority = document.getElementById('edit-priority').value;
+  t.cat = document.getElementById('edit-cat').value;
+  t.start = start; t.end = end;
+  save(); closeEdit(); render(); showToast('Đã lưu thay đổi ✅');
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEdit(); });
 
 // Init
 buildCatSel(); buildCatChips(); buildCatFilters(); updateNotifUI();
