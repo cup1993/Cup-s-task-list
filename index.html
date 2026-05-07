@@ -148,6 +148,7 @@
 
   .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
   .empty i { font-size: 36px; display: block; margin-bottom: 8px; }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--text1); color: var(--bg); font-size: 13px; padding: 8px 18px; border-radius: 99px; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 999; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -332,41 +333,65 @@
 
 <div class="toast" id="toast"></div>
 
-<script>
-const KEY = 'mytasks_v2';
-let state = load();
+<script type="module">
+// ── Firebase SDK ──────────────────────────────────────────
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDevMrjcEoY-h14feZl7fM0eq1Pj2lCcv0",
+  authDomain: "cup-task-list.firebaseapp.com",
+  databaseURL: "https://cup-task-list-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "cup-task-list",
+  storageBucket: "cup-task-list.firebasestorage.app",
+  messagingSenderId: "495598253647",
+  appId: "1:495598253647:web:84120e1cfdbdaa09d19c3a"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const dbRef = ref(db, 'data');
+
+// ── State ─────────────────────────────────────────────────
+const DEFAULT_STATE = {
+  nextId: 5,
+  categories: [
+    {id:'es',name:'eSign',color:'#378ADD'},
+    {id:'cs',name:'CS',color:'#639922'},
+    {id:'cn',name:'Cá nhân',color:'#D4537E'},
+  ],
+  tasks: []
+};
+
+let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
 let expandedId = null, dragSrcId = null;
 let filters = { status:'all', priority:'all', cat:'all' };
 let notifOn = localStorage.getItem('notif_on') === '1';
 let remindDays = parseInt(localStorage.getItem('remind_days') || '3');
 let notifTimer = null;
+let fbLoaded = false;
 
-function load() {
-  try { const r = localStorage.getItem(KEY); if (r) return JSON.parse(r); } catch(_) {}
-  return {
-    nextId: 5,
-    categories: [
-      {id:'es',name:'eSign',color:'#378ADD'},
-      {id:'cs',name:'CS',color:'#639922'},
-      {id:'cn',name:'Cá nhân',color:'#D4537E'},
-      
-    ],
-    tasks: [
-      {id:1,name:'Viết báo cáo dự án Q2',priority:'cao',cat:'es',start:'2025-05-01',end:'2025-05-15',done:false,note:'Tập trung phần phân tích số liệu và biểu đồ.',subtasks:[
-        {id:101,name:'Thu thập dữ liệu từ hệ thống',done:true},
-        {id:102,name:'Vẽ biểu đồ thống kê',done:false},
-        {id:103,name:'Viết phần kết luận',done:false},
-      ]},
-      {id:2,name:'Ôn thi chứng chỉ SQL',priority:'trung',cat:'cs',start:'2025-05-05',end:'2025-05-25',done:false,note:'Window functions, CTE, index.',subtasks:[
-        {id:201,name:'Ôn Window Functions',done:true},
-        {id:202,name:'Thực hành CTE',done:false},
-      ]},
-      {id:3,name:'Tập thể dục mỗi ngày',priority:'thap',cat:'cn',start:'2025-05-01',end:'2025-05-31',done:false,note:'',subtasks:[]},
-      {id:4,name:'Lên kế hoạch tháng 6',priority:'trung',cat:'cn',start:'2025-05-20',end:'2025-05-30',done:false,note:'',subtasks:[]},
-    ]
-  };
+// Show loading
+document.getElementById('task-list').innerHTML = '<div class="empty"><i class="ti ti-refresh" style="font-size:28px;display:block;margin-bottom:8px;animation:spin 1s linear infinite"></i>Đang tải dữ liệu...</div>';
+
+// Listen realtime từ Firebase
+onValue(dbRef, (snapshot) => {
+  const data = snapshot.val();
+  if (data) {
+    state = data;
+    if (!state.subtasks) state.tasks.forEach(t => { if(!t.subtasks) t.subtasks = []; });
+  }
+  if (!fbLoaded) {
+    fbLoaded = true;
+    buildCatSel(); buildCatChips(); buildCatFilters(); updateNotifUI();
+    if(notifOn && Notification.permission==='granted') scheduleNotifs();
+  }
+  render();
+});
+
+function save() {
+  set(dbRef, state).catch(() => showToast('Lỗi lưu dữ liệu!'));
 }
-function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(_) {} }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function rgba(hex,a) { const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return `rgba(${r},${g},${b},${a})`; }
 function today0() { const d=new Date(); d.setHours(0,0,0,0); return d; }
@@ -757,10 +782,7 @@ function importData(e) {
   e.target.value = '';
 }
 
-// Init
-buildCatSel(); buildCatChips(); buildCatFilters(); updateNotifUI();
-if(notifOn&&Notification.permission==='granted') scheduleNotifs();
-render();
+// (Firebase onValue handles init above)
 </script>
 </body>
 </html>
