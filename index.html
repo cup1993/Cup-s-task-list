@@ -146,6 +146,23 @@
   .empty { text-align: center; padding: 3rem 1rem; color: var(--text3); font-size: 14px; }
   .empty i { font-size: 36px; display: block; margin-bottom: 8px; }
   @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+  /* Login screen */
+  .login-screen { position: fixed; inset: 0; background: var(--bg2); display: flex; align-items: center; justify-content: center; z-index: 200; flex-direction: column; gap: 0; }
+  .login-card { background: var(--bg); border: .5px solid var(--border2); border-radius: 16px; padding: 2.5rem 2rem; text-align: center; max-width: 360px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,.12); }
+  .login-icon { font-size: 40px; margin-bottom: 12px; }
+  .login-title { font-size: 20px; font-weight: 600; margin-bottom: 6px; }
+  .login-sub { font-size: 13px; color: var(--text3); margin-bottom: 24px; }
+  .btn-google { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; height: 44px; border-radius: 10px; border: .5px solid var(--border1); background: var(--bg); color: var(--text1); font-size: 14px; font-weight: 500; cursor: pointer; font-family: var(--font); transition: background .15s; }
+  .btn-google:hover { background: var(--bg2); }
+  .btn-google img { width: 20px; height: 20px; }
+
+  /* User info in header */
+  .user-info { display: flex; align-items: center; gap: 8px; }
+  .user-avatar { width: 28px; height: 28px; border-radius: 50%; object-fit: cover; display: none; }
+  .user-name { font-size: 12px; color: var(--text2); max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .btn-logout { height: 28px; padding: 0 10px; border-radius: 99px; border: .5px solid var(--border1); background: transparent; color: var(--text3); font-size: 11px; cursor: pointer; font-family: var(--font); }
+  .btn-logout:hover { color: #E24B4A; border-color: #E24B4A; background: #FCEBEB; }
   .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(60px); background: var(--text1); color: var(--bg); font-size: 13px; padding: 8px 18px; border-radius: 99px; opacity: 0; transition: all .3s; pointer-events: none; white-space: nowrap; z-index: 999; }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
@@ -195,11 +212,30 @@
 </style>
 </head>
 <body>
+<!-- Login Screen -->
+<div class="login-screen" id="login-screen">
+  <div class="login-card">
+    <div class="login-icon">📋</div>
+    <div class="login-title">Công việc của tôi</div>
+    <div class="login-sub">Đăng nhập để đồng bộ công việc<br>trên mọi thiết bị</div>
+    <button class="btn-google" onclick="loginGoogle()">
+      <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
+      Đăng nhập với Google
+    </button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
 <div class="app">
   <div class="header">
     <div class="header-left">
       <div class="date-label" id="date-label"></div>
       <div class="title">Công việc của tôi</div>
+    </div>
+    <div class="user-info">
+      <img class="user-avatar" id="user-avatar" src="" alt="" />
+      <span class="user-name" id="user-name"></span>
+      <button class="btn-logout" onclick="logoutUser()"><i class="ti ti-logout" style="font-size:11px"></i> Đăng xuất</button>
     </div>
     <button class="notif-btn" id="notif-btn" onclick="toggleNotif()">
       <span class="notif-dot"></span>
@@ -324,11 +360,13 @@
 </div>
 
 <div class="toast" id="toast"></div>
+</div><!-- end #app -->
 
 <script type="module">
 // ── Firebase SDK ──────────────────────────────────────────
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getDatabase, ref, onValue, set } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDevMrjcEoY-h14feZl7fM0eq1Pj2lCcv0",
@@ -342,7 +380,53 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
 const dbRef = ref(db, 'data');
+
+// ── Auth ──────────────────────────────────────────────────
+let unsubscribeDB = null;
+
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // Đã đăng nhập
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('user-name').textContent = user.displayName || user.email;
+    document.getElementById('user-avatar').src = user.photoURL || '';
+    document.getElementById('user-avatar').style.display = user.photoURL ? 'block' : 'none';
+    // Lắng nghe Firebase
+    document.getElementById('task-list').innerHTML = '<div class="empty"><i class="ti ti-refresh" style="font-size:28px;display:block;margin-bottom:8px;animation:spin 1s linear infinite"></i>Đang tải dữ liệu...</div>';
+    unsubscribeDB = onValue(dbRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        state = data;
+        state.tasks.forEach(t => { if(!t.subtasks) t.subtasks = []; });
+      }
+      if (!fbLoaded) {
+        fbLoaded = true;
+        buildCatSel(); buildCatChips(); buildCatFilters(); updateNotifUI();
+        if(notifOn && Notification.permission==='granted') scheduleNotifs();
+      }
+      render();
+    });
+  } else {
+    // Chưa đăng nhập
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('app').style.display = 'none';
+    if (unsubscribeDB) { unsubscribeDB(); unsubscribeDB = null; }
+    fbLoaded = false;
+  }
+});
+
+function loginGoogle() {
+  signInWithPopup(auth, provider).catch(e => showToast('Đăng nhập thất bại: ' + e.message));
+}
+function logoutUser() {
+  if (confirm('Đăng xuất?')) signOut(auth);
+}
+window.loginGoogle = loginGoogle;
+window.logoutUser = logoutUser;
 
 // ── State ─────────────────────────────────────────────────
 const DEFAULT_STATE = {
@@ -362,24 +446,6 @@ let notifOn = localStorage.getItem('notif_on') === '1';
 let remindDays = parseInt(localStorage.getItem('remind_days') || '3');
 let notifTimer = null;
 let fbLoaded = false;
-
-// Show loading
-document.getElementById('task-list').innerHTML = '<div class="empty"><i class="ti ti-refresh" style="font-size:28px;display:block;margin-bottom:8px;animation:spin 1s linear infinite"></i>Đang tải dữ liệu...</div>';
-
-// Listen realtime từ Firebase
-onValue(dbRef, (snapshot) => {
-  const data = snapshot.val();
-  if (data) {
-    state = data;
-    if (!state.subtasks) state.tasks.forEach(t => { if(!t.subtasks) t.subtasks = []; });
-  }
-  if (!fbLoaded) {
-    fbLoaded = true;
-    buildCatSel(); buildCatChips(); buildCatFilters(); updateNotifUI();
-    if(notifOn && Notification.permission==='granted') scheduleNotifs();
-  }
-  render();
-});
 
 function save() {
   set(dbRef, state).catch(() => showToast('Lỗi lưu dữ liệu!'));
